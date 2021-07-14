@@ -21,8 +21,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-let officialRouter = require("./routes/official.js");
-app.use('/official', officialRouter);
+// let officialRouter = require("./routes/official.js");
+// app.use('/official', officialRouter);
 let official = require("./api/official.js");
 app.use("/official", official);
 
