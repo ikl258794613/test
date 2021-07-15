@@ -76,4 +76,4 @@ getXXXFromServer()
 
    觀察網頁的 console 跟伺服器的終端機有沒有目標資料
 
-9. 有問題再問我
+9. 有問題再問我，絕對不要 push 檔案到我的 test 專案
