@@ -6,7 +6,7 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const moment = require('moment')
-
+const cors = require('cors')
 let today = moment().format();
 const app = express();
 
@@ -14,6 +14,7 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug')
 
+app.use(cors())
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -21,10 +22,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// let officialRouter = require("./routes/official.js");
-// app.use('/official', officialRouter);
-let official = require("./api/official.js");
+
+let official = require("./api/Official/official.js");
 app.use("/official", official);
+
+
 
 
 app.use('/', indexRouter);
