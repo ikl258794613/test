@@ -5,8 +5,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const moment = require('moment')
-const cors = require('cors')
+const moment = require('moment');
+const cors = require('cors');
 let today = moment().format();
 const app = express();
 
@@ -26,6 +26,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 let official = require("./api/Official/official.js");
 app.use("/official", official);
 
+let checkout = require("./api/Checkout/checkout.js");
+app.use("/checkout", checkout);
 
 
 
