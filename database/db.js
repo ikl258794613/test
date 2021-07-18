@@ -8,6 +8,7 @@ let connection = mysql.createConnection({
     password: process.env.DB_PASS,
     database: process.env.DB_DATABASE,
     dateStrings: true,
+    //把資料庫的時間弄對
   });
 
 connection = Promise.promisifyAll(connection);
