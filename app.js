@@ -36,11 +36,13 @@ app.use(
   })
 )
 
-let loginAndRegister = require('./api/LoginAndRegister/loginandregister.js')
+// let loginAndRegister = require('./api/LoginAndRegister/loginandregister.js')
 let official = require("./api/Official/official.js");
+let series = require("./api/Official/series.js");
 
 app.use("/official", official);
-app.use("/loginAndRegister", loginAndRegister);
+app.use("/series", series);
+// app.use("/loginAndRegister", loginAndRegister);
 // let checkout = require("./api/Checkout/checkout.js");
 // app.use("/checkout", checkout);
 
