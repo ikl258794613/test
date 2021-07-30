@@ -18,10 +18,14 @@ router.get("/", async (req, res) => {
     "SELECT * FROM official_product WHERE volume=? ORDER BY id LIMIT ? OFFSET ?;",
     ["50ml",perPage, offset]
   );
+  const material = await connection.queryAsync(
+    "SELECT * FROM official_ingredient ORDER BY id"
+  )
   let result = {};//變成物件
+
   result.data = productresults
   result.page = lastPage
-  
+  result.material = material
   console.log(result)
   res.json(result);
 });
