@@ -83,7 +83,7 @@ app.use("/loginAndRegister", loginAndRegister)
 app.use('/sidebar', sidebar)
 //購物車
 app.use("/checkout", checkout)
-app.use("/officialorder",officialorder)
+// app.use("/officialorder",officialorder)
 //客製化服務
 app.use('/custom', customRouter)
 //官方商品
