@@ -46,6 +46,8 @@ app.use(
     saveUninitialized: true,
   })
 )
+// home 
+const homeRouter = require('./api/Home/home');
 
 //member
 const member = require('./api/Member/member.js')
@@ -54,33 +56,48 @@ const loginAndRegister = require('./api/LoginAndRegister/loginandregister.js')
 const sidebar = require('./api/Sidebar/sidebar.js')
 //購物車
 const checkout = require("./api/Checkout/checkout.js");
+const officialorder = require("./api/Checkout/officialorder.js")
 //客製化服務
 const customRouter = require('./api/Custom/custom')
 //官方商品
 const official = require("./api/Official/official.js");
 const series = require("./api/Official/series.js");
 const search = require("./api/Official/search.js");
+const buyProduct = require("./api/Official/buyProduct.js")
+const collectProduct = require("./api/Official/collectProduct.js")
 //課程
 const course = require('./api/Course/course.js');
 const getCourseForm = require("./api/Course/getForm.js");
+const getCollect = require("./api/Course/getCollect.js")
 
+
+//排行榜
+const bestSellerRouter = require('./api/Bestseller/bestseller')
+
+//home
+app.use('/home', homeRouter);
 //member
 app.use("/member", member)
-app.use("/loginAndRegister", loginAndRegister);
+app.use("/loginAndRegister", loginAndRegister)
 //sidebar
 app.use('/sidebar', sidebar)
 //購物車
-app.use("/checkout", checkout);
+app.use("/checkout", checkout)
+app.use("/officialorder",officialorder)
 //客製化服務
 app.use('/custom', customRouter)
 //官方商品
-app.use("/official", official);
-app.use("/series", series);
-app.use("/search", search);
+app.use("/official", official)
+app.use("/series", series)
+app.use("/search", search)
+app.use("/buyProduct", buyProduct)
+app.use("/collectProduct", collectProduct)
 //課程
-app.use("/course", course);
-app.use("/getCourseForm", getCourseForm);
-
+app.use("/course", course)
+app.use("/getCourseForm", getCourseForm)
+app.use("/getCollect", getCollect);
+//排行榜
+app.use('/bestseller', bestSellerRouter)
 
 app.use('/', indexRouter);
 // app.use('/users', usersRouter);

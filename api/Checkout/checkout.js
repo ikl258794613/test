@@ -6,7 +6,7 @@ const connection = require("../../database/db");
 
 /* 官方 */
 router.get("/official", async (req, res) => {
-  let targetMemberId = 1; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
+  let targetMemberId = 33; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
   const targetMemberCart = await connection.queryAsync(
     "SELECT * FROM official_cart WHERE member_id=?",
     [targetMemberId]
@@ -51,7 +51,7 @@ router.get("/official", async (req, res) => {
 
 /* 客製化 */
 router.get("/custom", async (req, res) => {
-  let targetMemberId = 1; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
+  let targetMemberId = 33; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
   const targetMemberCart = await connection.queryAsync(
     "SELECT * FROM customized_cart WHERE member_id=?",
     [targetMemberId]
@@ -97,9 +97,9 @@ router.get("/custom", async (req, res) => {
   res.json(totalCustomInformation);
 });
 
-/* 課程： */
+/* 課程 */
 router.get("/course", async (req, res) => {
-  let targetMemberId = 1; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
+  let targetMemberId = 33; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
   const targetMemberCart = await connection.queryAsync(
     "SELECT * FROM course_cart WHERE member_id=?",
     [targetMemberId]
@@ -108,21 +108,44 @@ router.get("/course", async (req, res) => {
   // 取出member_id = 1的人購物車內的商品id轉成陣列放進sql搜尋
   let totalCourseInformation = [];
 
-  /* 課程： */
+  /* 課程 */
   const courseInformation = await connection.queryAsync(
     "SELECT * FROM course WHERE course_id=?",
     [courseIdArray]
   );
   totalCourseInformation.push(courseInformation[0]);
 
-  /* 課程：增加課程報名人數 */
-  let courseQuantity = targetMemberCart[0].number_of_people;
-  console.log(courseQuantity);
-  /* 課程：增加課程報名方案 */
+  /* 課程：增加課程方案 */
   let coursePackage = targetMemberCart[0].program;
   console.log(coursePackage);
+  /* 課程：增加課程日期 */
+  let courseDate = targetMemberCart[0].date;
+  console.log(courseDate);
+  /* 課程：增加課程方案時段 */
+  let coursePeriod = targetMemberCart[0].time;
+  console.log(coursePeriod);
+  /* 課程：增加課程地點 */
+  let coursePlace = targetMemberCart[0].place;
+  console.log(coursePlace);
+  /* 課程：增加課程方案價格 */
+  let coursePrice = targetMemberCart[0].price;
+  console.log(coursePrice);
+  /* 課程：增加課程人數 */
+  let coursePeople = targetMemberCart[0].number_of_people;
+  console.log(coursePeople);
+  /* 課程：增加課程方案數量 */
+  let courseQuantity = targetMemberCart[0].qty;
+  console.log(courseQuantity);
   totalCourseInformation.map((item) => {
-    return (item.quantity = courseQuantity), (item.package = coursePackage);
+    return (
+      (item.package = coursePackage),
+      (item.date = courseDate),
+      (item.period = coursePeriod),
+      (item.place = coursePlace),
+      (item.price = coursePrice),
+      (item.people = coursePeople),
+      (item.quantity = courseQuantity)
+    );
   });
 
   const totalApiInformation = {};
@@ -133,7 +156,7 @@ router.get("/course", async (req, res) => {
 
 /* 會員 */
 router.get("/member", async (req, res) => {
-  let targetMemberId = 1; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
+  let targetMemberId = 33; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
   const targetMemberCart = await connection.queryAsync(
     "SELECT * FROM official_cart WHERE member_id=?",
     [targetMemberId]
@@ -154,4 +177,14 @@ router.get("/member", async (req, res) => {
   res.json(totalMemberInformation);
 });
 
+/* 店鋪 */
+router.get("/store", async (req, res) => {
+  let coursePlace = await connection.queryAsync("SELECT * From course_place");
+  let result = {};
+  result.place = coursePlace;
+  res.json(result);
+});
+
 module.exports = router;
+
+
