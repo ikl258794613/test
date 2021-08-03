@@ -65,6 +65,7 @@ const series = require("./api/Official/series.js");
 const search = require("./api/Official/search.js");
 const buyProduct = require("./api/Official/buyProduct.js")
 const collectProduct = require("./api/Official/collectProduct.js")
+const officialId = require("./api/Official/officialid.js");
 //課程
 const course = require('./api/Course/course.js');
 const getCourseForm = require("./api/Course/getForm.js");
@@ -92,6 +93,7 @@ app.use("/series", series)
 app.use("/search", search)
 app.use("/buyProduct", buyProduct)
 app.use("/collectProduct", collectProduct)
+app.use("/officialid", officialId);
 //課程
 app.use("/course", course)
 app.use("/getCourseForm", getCourseForm)
