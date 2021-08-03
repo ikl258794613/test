@@ -56,7 +56,7 @@ const loginAndRegister = require('./api/LoginAndRegister/loginandregister.js')
 const sidebar = require('./api/Sidebar/sidebar.js')
 //購物車
 const checkout = require("./api/Checkout/checkout.js");
-const officialorder = require("./api/Checkout/officialorder.js")
+// const officialorder = require("./api/Checkout/officialorder.js")
 //客製化服務
 const customRouter = require('./api/Custom/custom')
 //官方商品

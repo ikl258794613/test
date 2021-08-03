@@ -213,12 +213,6 @@ router.get("/customCollect", async (req, res) => {
 });
 
 // -------------------- 課程收藏清單 --------------------
-// -------------------- 這裡有問題，還不能算是做好！！！！！
-// -------------------- 這裡有問題，還不能算是做好！！！！！
-// -------------------- 這裡有問題，還不能算是做好！！！！！
-// -------------------- 這裡有問題，還不能算是做好！！！！！
-// -------------------- 這裡有問題，還不能算是做好！！！！！
-// -------------------- 這裡有問題，還不能算是做好！！！！！
 
 router.get("/courseCollect", async (req, res) => {
   let targetMemberId = 1; 
@@ -227,42 +221,7 @@ router.get("/courseCollect", async (req, res) => {
     "SELECT * FROM course_collect WHERE member_id=?",
     [targetMemberId]
   );
-  let courseIdArray = targetMemberCollect[0].course_id;
-  let totalCourseInformation = [];
-  /* 課程 */
-  const courseInformation = await connection.queryAsync(
-    "SELECT * FROM course WHERE course_id=?",
-    [courseIdArray]
-  );
-  totalCourseInformation.push(courseInformation[0]);
-  /* 課程：增加課程方案 */
-  let coursePackage = targetMemberCollect[0].program;
-  /* 課程：增加課程日期 */
-  let courseDate = targetMemberCollect[0].date;
-  /* 課程：增加課程方案時段 */
-  let coursePeriod = targetMemberCollect[0].time;
-  /* 課程：增加課程地點 */
-  let coursePlace = targetMemberCollect[0].place;
-  /* 課程：增加課程方案價格 */
-  let coursePrice = targetMemberCollect[0].price;
-  /* 課程：增加課程人數 */
-  let coursePeople = targetMemberCollect[0].number_of_people;
-  /* 課程：增加課程方案數量 */
-  let courseQuantity = targetMemberCollect[0].qty;
-  totalCourseInformation.map((item) => {
-    return (
-      (item.package = coursePackage),
-      (item.date = courseDate),
-      (item.period = coursePeriod),
-      (item.place = coursePlace),
-      (item.price = coursePrice),
-      (item.people = coursePeople),
-      (item.quantity = courseQuantity)
-    );
-  });
-  const totalApiInformation = {};
-  totalApiInformation.course = totalCourseInformation;
-  res.json(totalCourseInformation);
+  res.json(targetMemberCollect);
 });
 
 module.exports = router;

@@ -12,7 +12,7 @@ const connection = require('../../database/db')
 // if member dose exist, use response to deal with rest of the things
 
 async function updatePolularTable (req) {
-  const {productCode, topNote, middleNote, baseNote, serieId, productImage} = req.body
+  const { productCode, topNote, middleNote, baseNote, serieId, serieName, productImage, color } = req.body
 
   // check if popular table has data or not
   const queryProductRes = await connection.queryAsync('SELECT * FROM customized_popular WHERE cust_id = ?', [productCode])
@@ -31,9 +31,9 @@ async function updatePolularTable (req) {
     const middleZh = middleNote.title
     const baseZh = baseNote.title
     const totalPrice = topNote.price + middleNote.price + baseNote.price
-    const insertData = [custId, topId, middleId, baseId, serieId, topZh, middleZh, baseZh, productImage, totalPrice]
+    const insertData = [custId, topId, middleId, baseId, serieId, topZh, middleZh, baseZh, serieName, productImage, color, totalPrice]
 
-    const res = await connection.queryAsync('INSERT customized_popular(cust_id, top_id, mid_id, base_id, frag_id, top_zh, mid_zh, base_zh, bottle_img, price) VALUE(?)', [insertData])
+    const res = await connection.queryAsync('INSERT customized_popular(cust_id, top_id, mid_id, base_id, frag_id, top_zh, mid_zh, base_zh, serie_zh, bottle_img, color, price) VALUE(?)', [insertData])
   }
 }
 
