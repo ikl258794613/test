@@ -47,28 +47,26 @@ const jwt = require("jsonwebtoken");
 module.exports.login = async (req, res, next) => {
     console.log('Inside POST /login callback')
     passport.authenticate('local', (err, user, info) => {
-      // req.login(user, (err) => {
-      //   console.log("=================",req.session.passport,"=================",req.user,"==================================")
-      //   if (req.user) return res.json(req.user)
-      //   else return res.json({})
-      // })
+
       req.login(user, (err) => {
 
       })
 
       if (req.user){
         const token = jwt.sign({ mid: user.id }, process.env.JWT_SECRET, {expiresIn: "1h"});
-        return res.json({ code: 0, token: token });
+        return res.json({ code: 0, token: token, userId: user.id});
       }else{
         return res.json({code: 1})
       }
     })(req, res, next)
   }
 
-  module.exports.isLoggedIn = (req, res) => {
-    // read jwt token
-    const token = req.header("Authorization").replace("Bearer ", "");
-    // verify
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    res.json(decoded)
-  }
+  // module.exports.isLoggedIn = (req, res, next) => {
+  //   // read jwt token
+  //   const token = req.header("Authorization").replace("Bearer ", "");
+  //   console.log(token)
+  //   // verify
+  //   const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  //   // res.json(decoded)
+  //   console.log(decoded)
+  // }

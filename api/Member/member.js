@@ -4,9 +4,69 @@ const router = express.Router();
 // const userController = require('./controllers/user')
 const promisePool = require('../../database/dblogin').promisePool
 
+async function updateCartOrFavTable(memberId, productId, tableName) {
+  // check if there is member's column in cart table or not
+  // create one if not, update it if already has one
+  const queryMemberRes = await promisePool.query(`SELECT * FROM ${tableName} WHERE member_id = ?`, [memberId])
+  // console.log('query member: ', queryMemberRes)
+
+  if (queryMemberRes.length === 0 ){
+    // member does not have cart
+    const res = await promisePool.query(`INSERT INTO ${tableName}(member_id, customized_id, customized_quantity) VALUE(?, ?, ?)`, [memberId, productId, 1])
+
+  } else {
+    // member already has cart
+    const userData = queryMemberRes[0][0]
+    const productArr = userData.customized_id.split(',').map(Number)
+    const quantityArr = userData.customized_quantity.split(',').map(Number)
+
+    // is the product in the cart list or not
+    const index = productArr.findIndex((item) => {
+      return productId === item
+    })
+    // console.log('index of product id: ', index)
+
+    if (index > -1) {
+      // on the list
+      quantityArr[index] += 1
+      const quantityStr = quantityArr.join(',')
+
+      const res = await promisePool.query(`UPDATE ${tableName} SET customized_quantity = ? WHERE member_id = ?`, [quantityStr, memberId])
+      // console.log("updated successfully!", res)
+    } else {
+      // not on the list
+      const productStr = [...productArr, productId].join(',')
+      const quantityStr = [...quantityArr, 1].join(',')
+
+      const res = await promisePool.query(`UPDATE ${tableName} SET customized_id = ?, customized_quantity = ? WHERE member_id = ?`, [productStr, quantityStr, memberId])
+      // console.log("updated successfully!", res)
+    }
+  }
+}
+
+router.post('/cart', async (req,res) => {
+  const token = req.header("Authorization")
+  // console.log(req.body)
+  const memberId =  token
+  const productId = req.body.id
+  const tableName = 'customized_cart'
+
+  // update cart or favorite table 
+  const result = await updateCartOrFavTable(memberId, productId, tableName)
+
+  res.json({'message': 'cart table updated successfully!!'})
+})
+
+
+
 // 取得會員資料
 router.get('/profile', async (req, res, next) => {
-    let memberId = 2
+    // read jwt token
+    const token = req.header("Authorization")
+    console.log("會員ID:",token)
+    // verify
+    let memberId = token
+
     const getUser = await promisePool.query(
         "SELECT * FROM member WHERE id=?",
         [memberId]
@@ -15,6 +75,8 @@ router.get('/profile', async (req, res, next) => {
   })
 // 修改會員資料
 router.post('/profile', async (req, res) => {
+  const token = req.header("Authorization")
+  console.log("會員ID:",token)
     const member_profiles = req.body.values.member_profiles
     const member_account = req.body.values.member_account
     const member_name = req.body.values.member_name
@@ -25,7 +87,7 @@ router.post('/profile', async (req, res) => {
     const member_phone = req.body.values.member_phone
     const member_address = req.body.values.member_address
     const member_receive = req.body.values.member_receive
-    let memberId = 2
+    let memberId = token
 
 
     const updateUser = await promisePool.query(
@@ -37,7 +99,9 @@ router.post('/profile', async (req, res) => {
 
 // 取得會員收藏的課程
 router.get('/favorites/course', async (req, res) => {
-    let memberId = 1
+  const token = req.header("Authorization")
+  console.log("會員ID:",token)
+    let memberId = token
     const getCourse = await promisePool.query(
         "SELECT * FROM course_collect WHERE member_id=?",
         [memberId]
@@ -51,7 +115,10 @@ router.get('/favorites/course', async (req, res) => {
 
 // official_collect （珍藏清單）資料表的 API
 router.get("/officialCollect", async (req, res) => {
-    let tarrgetMemberId = 1; //這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
+  const token = req.header("Authorization")
+  console.log("會員ID:",token)
+
+    let tarrgetMemberId = token; //這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
     const targetMemberCollect = await promisePool.query(
       "SELECT *  FROM official_collect WHERE member_id=?",
       [tarrgetMemberId]
@@ -71,7 +138,10 @@ router.get("/officialCollect", async (req, res) => {
   });
   // customized_collect （珍藏清單）資料表的 API
 router.get("/customCollect", async (req, res) => {
-    let tarrgetMemberId = 1; //這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
+  const token = req.header("Authorization")
+  console.log("會員ID:",token)
+
+    let tarrgetMemberId = token; //這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
     const targetMemberCollect = await promisePool.query(
       "SELECT *  FROM customized_collect WHERE member_id=?",
       [tarrgetMemberId]
@@ -90,7 +160,9 @@ router.get("/customCollect", async (req, res) => {
   });
 
   router.get("/official", async (req, res) => {
-    let targetMemberId = 1;
+    const token = req.header("Authorization")
+    console.log("會員ID:",token)
+    let targetMemberId = token;
     const targetMemberCart = await promisePool.query(
       "SELECT * FROM official_cart WHERE member_id=?",
       [targetMemberId]
@@ -134,7 +206,9 @@ router.get("/customCollect", async (req, res) => {
   
   /* 客製化 */
   router.get("/custom", async (req, res) => {
-    let targetMemberId = 1; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
+    const token = req.header("Authorization")
+    console.log("會員ID:",token)
+    let targetMemberId = token; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
     const targetMemberCart = await promisePool.query(
       "SELECT * FROM customized_cart WHERE member_id=?",
       [targetMemberId]
