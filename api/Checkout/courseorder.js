@@ -15,6 +15,8 @@ router.post("/", async (req, res) => {
   let orderNumber =  getId()
   const order = await connection.queryAsync(`INSERT INTO course_end_order (member_id, course_id, place,date,package,people,period,price,order_id) VALUES (?,?,?,?,?,?,?,?,?)`,
   [memberId,course_id, place,date,package,people,period,price, orderNumber])
+  
+  // const deletedata =  await connection.queryAsync(`DELETE FROM course_cart WHERE member_id = ?` ,[memberId])
   });
   
   module.exports = router;

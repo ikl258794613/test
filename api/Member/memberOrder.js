@@ -3,7 +3,7 @@ const router = express.Router();
 const connection = require("../../database/db");
 
 router.get("/", async (req, res) => {
-  const member_id = 1
+  const member_id = req.session.mid
   const orderDetail = await connection.queryAsync(
     "SELECT * FROM official_end_order WHERE member_id=?",
     [member_id]
