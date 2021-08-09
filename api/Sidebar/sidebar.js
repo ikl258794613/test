@@ -4,7 +4,7 @@ const connection = require("../../database/db");
 
 //-------------------- 官方產品購物車 --------------------
 router.get("/official", async (req, res) => {
-  let targetMemberId = 1;
+  let targetMemberId = req.session.mid;
   const targetMemberCart = await connection.queryAsync(
     "SELECT * FROM official_cart WHERE member_id=?",
     [targetMemberId]
@@ -43,7 +43,7 @@ router.get("/official", async (req, res) => {
 
 /* -------------------- 客製化產品購物車 -------------------- */
 router.get("/custom", async (req, res) => {
-  let targetMemberId = 1; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
+  let targetMemberId = req.session.mid; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
   const targetMemberCart = await connection.queryAsync(
     "SELECT * FROM customized_cart WHERE member_id=?",
     [targetMemberId]
@@ -93,7 +93,7 @@ router.get("/custom", async (req, res) => {
 
 /* -------------------- 課程產品購物車 -------------------- */
 router.get("/course", async (req, res) => {
-  let targetMemberId = 1; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
+  let targetMemberId = req.session.mid; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
 
   let totalCourseInformation = [];
 
@@ -108,6 +108,7 @@ router.get("/course", async (req, res) => {
     "SELECT * FROM course WHERE course_id=?",
     [courseIdArray]
   );
+
   totalCourseInformation.push(courseInformation[0]);
   /* 課程：增加課程方案 */
   let coursePackage = targetMemberCart[0].program;
@@ -141,7 +142,7 @@ router.get("/course", async (req, res) => {
 
 // -------------------- 官方產品收藏清單 --------------------
 router.get("/officialCollect", async (req, res) => {
-  let tarrgetMemberId = 1;
+  let tarrgetMemberId = req.session.mid;
   const targetMemberCollect = await connection.queryAsync(
     "SELECT *  FROM official_collect WHERE member_id=?",
     [tarrgetMemberId]
@@ -178,7 +179,7 @@ router.get("/officialCollect", async (req, res) => {
 
 // -------------------- 客製化產品收藏清單 --------------------
 router.get("/customCollect", async (req, res) => {
-  let tarrgetMemberId = 1;
+  let tarrgetMemberId = req.session.mid;
   const targetMemberCustomCollect = await connection.queryAsync(
     "SELECT *  FROM customized_collect WHERE member_id=?",
     [tarrgetMemberId]
@@ -222,13 +223,126 @@ router.get("/customCollect", async (req, res) => {
 // -------------------- 課程收藏清單 --------------------
 
 router.get("/courseCollect", async (req, res) => {
-  let targetMemberId = 1;
+  let targetMemberId = req.session.mid;
 
   const targetMemberCollect = await connection.queryAsync(
     "SELECT * FROM course_collect WHERE member_id=?",
     [targetMemberId]
   );
   res.json(targetMemberCollect);
+});
+
+// 更新 official_cart 以及 Customized_cart 資料表
+async function updateCart(memberID, productIDs, productQTYs, tableName) {
+  const queryMemberRes = await connection.queryAsync(
+    `SELECT * FROM ${tableName} WHERE member_id = ?`,
+    [memberID]
+  );
+
+  if (queryMemberRes.length === 0 && tableName === "official_cart") {
+    const res = await connection.queryAsync(
+      `INSERT INTO ${tableName}(member_id, 	product_id, product_quantity) VALUE(?, ?, ?)`,
+      [memberID, productIDs, productQTYs]
+    );
+  } else if (queryMemberRes.length === 0 && tableName === "customized_cart") {
+    const res = await connection.queryAsync(
+      `INSERT INTO ${tableName}(member_id, 	customized_id, customized_quantity) VALUE(?, ?, ?)`,
+      [memberID, productIDs, productQTYs]
+    );
+  } else if (tableName === "official_cart") {
+    const res = await connection.queryAsync(
+      `UPDATE ${tableName} SET product_id = ?, product_quantity = ? WHERE member_id = ?`,
+      [productIDs, productQTYs, memberID]
+    );
+  } else if (tableName === "customized_cart") {
+    const res = await connection.queryAsync(
+      `UPDATE ${tableName} SET customized_id = ?, customized_quantity = ? WHERE member_id = ?`,
+      [productIDs, productQTYs, memberID]
+    );
+  }
+}
+
+// 更新 official_collect 以及 customized_collect 資料表
+async function updateCollect(memberID, productIDs, tableName, productQTYs) {
+  const queryMemberRes = await connection.queryAsync(
+    `SELECT * FROM ${tableName} WHERE member_id = ?`,
+    [memberID]
+  );
+
+  if (queryMemberRes.length === 0) {
+    if (tableName === "official_collect") {
+      const res = await connection.queryAsync(
+        `INSERT INTO ${tableName}(member_id, 	product_id) VALUE(?, ?)`,
+        [memberID, productIDs]
+      );
+    } else if (tableName === "customized_collect") {
+      const res = await connection.queryAsync(
+        `INSERT INTO ${tableName}(member_id, 	customized_id, customized_quantity) VALUE(?, ?, ?)`,
+        [memberID, productIDs, productQTYs]
+      );
+    }
+  } else if (tableName === "official_collect") {
+    const res = await connection.queryAsync(
+      `UPDATE ${tableName} SET product_id = ? WHERE member_id = ?`,
+      [productIDs, memberID]
+    );
+  } else if (tableName === "customized_collect") {
+    const res = await connection.queryAsync(
+      `UPDATE ${tableName} SET customized_id = ?, customized_quantity = ? WHERE member_id = ?`,
+      [productIDs, productQTYs, memberID]
+    );
+  }
+}
+// ------------------ Test 接收從前端來的資料 ----------------------
+router.post("/updateOfficialCart", async (req, res) => {
+  const member_id = req.session.mid;
+  const officialProductIDs = req.body.productIds;
+  const officialProductQTYs = req.body.productQuantitys;
+
+  updateCart(
+    member_id,
+    officialProductIDs,
+    officialProductQTYs,
+    "official_cart"
+  );
+
+  res.json({ message: "updateOfficialCart !!!!" });
+});
+
+router.post("/updateCustomCart", async (req, res) => {
+  const member_id = req.session.mid;
+  const officialProductIDs = req.body.productIds;
+  const officialProductQTYs = req.body.productQuantitys;
+  updateCart(
+    member_id,
+    officialProductIDs,
+    officialProductQTYs,
+    "customized_cart"
+  );
+
+  res.json({ message: "updateCustomCart !!!!" });
+});
+
+router.post("/updateOfficialCollect", async (req, res) => {
+  const member_id = req.session.mid;
+  // console.log(req.body);
+  const officialProductIDs = req.body.product_id;
+  updateCollect(member_id, officialProductIDs, "official_collect");
+  res.json({ message: "updateOfficialCollect !!!!" });
+});
+
+router.post("/updateCustomCollect", async (req, res) => {
+  const member_id = req.session.mid;
+  const customCollectIDs = req.body.customized_id;
+  const customCollectQTYs = req.body.customized_quantity;
+
+  updateCollect(
+    member_id,
+    customCollectIDs,
+    "customized_collect",
+    customCollectQTYs
+  );
+  res.json({ message: "updateCustomCollect !!!!" });
 });
 
 module.exports = router;

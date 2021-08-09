@@ -4,6 +4,7 @@ const connection = require("../../database/db");
 
 
 router.post("/", async (req, res) => {
+    const memberId = req.session.mid
     console.log(req.body);
     const course_priceAndPeople = req.body.form__price
     const course_people_before = req.body.form__price
@@ -16,7 +17,7 @@ router.post("/", async (req, res) => {
     const course_number_of_people = course_people_before.substring(0,2);
 
     console.log(course_number_of_people, course_price, course_place, course_program, course_date, course_time );
-    let courseInsert = await connection.queryAsync("INSERT INTO course_cart (price, place, program, date, time, number_of_people, course_id, member_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [course_price, course_place, course_program, course_date, course_time, course_number_of_people, 1, 1]);
+    let courseInsert = await connection.queryAsync("INSERT INTO course_cart (price, place, program, date, time, number_of_people, course_id, member_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [course_price, course_place, course_program, course_date, course_time, course_number_of_people, 1, memberId]);
 
 
 res.json(courseInsert);

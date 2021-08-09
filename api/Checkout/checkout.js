@@ -6,7 +6,8 @@ const connection = require("../../database/db");
 
 /* 官方 */
 router.get("/official", async (req, res) => {
-  let targetMemberId = 1;
+  // let targetMemberId = 1;
+  const targetMemberId = req.session.mid
 ; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
   const targetMemberCart = await connection.queryAsync(
     "SELECT * FROM official_cart WHERE member_id=?",
@@ -52,7 +53,8 @@ router.get("/official", async (req, res) => {
 
 /* 客製化 */
 router.get("/custom", async (req, res) => {
-  let targetMemberId = 1;
+  // let targetMemberId = 1;
+  const targetMemberId = req.session.mid
 ; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
   const targetMemberCart = await connection.queryAsync(
     "SELECT * FROM customized_cart WHERE member_id=?",
@@ -101,7 +103,8 @@ router.get("/custom", async (req, res) => {
 
 /* 課程 */
 router.get("/course", async (req, res) => {
-  let targetMemberId = 1;
+  // let targetMemberId = 1;
+  const targetMemberId = req.session.mid
 ; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
   const targetMemberCart = await connection.queryAsync(
     "SELECT * FROM course_cart WHERE member_id=?",
@@ -159,7 +162,8 @@ router.get("/course", async (req, res) => {
 
 /* 會員 */
 router.get("/member", async (req, res) => {
-  let targetMemberId = 1;
+  // let targetMemberId = 1;
+  const targetMemberId = req.session.mid
 ; // 這邊的1在實際使用時要帶入session的登入會員id =>EX: session.id
   const targetMemberCart = await connection.queryAsync(
     "SELECT * FROM official_cart WHERE member_id=?",

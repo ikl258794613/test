@@ -54,7 +54,8 @@ module.exports.login = async (req, res, next) => {
 
       if (req.user){
         const token = jwt.sign({ mid: user.id }, process.env.JWT_SECRET, {expiresIn: "1h"});
-        return res.json({ code: 0, token: token, userId: user.id});
+        // return res.json({ code: 0, token: token, userId: user.id});
+        return res.json({ code: 0, token: token});
       }else{
         return res.json({code: 1})
       }

@@ -44,7 +44,9 @@ async function checkProductInCart (memberId,productId){
 
 router.post('/', async (req,res) => {
     // console.log(req.body)
-    const { productId , productQuantity , memberId } = req.body.params
+    // const { productId , productQuantity , memberId } = req.body.params
+    const memberId = req.session.mid
+    const { productId , productQuantity } = req.body.params
     checkMemberCart(memberId,productId)
   
     res.json({'message': 'successfully!!'})

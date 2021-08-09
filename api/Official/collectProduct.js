@@ -46,7 +46,9 @@ async function checkProductInCollect (memberId,productId){
 router.post('/', async (req,res) => {
     // console.log(req.body)
     // console.log("這是會員的Collect")
-    const { productId , memberId } = req.body.params
+    // const { productId , memberId } = req.body.params
+    const memberId = req.session.mid
+    const { productId } = req.body.params
     checkMemberCollect(memberId,productId)
   
     res.json({'message': 'successfully!!'})

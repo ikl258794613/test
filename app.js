@@ -11,6 +11,7 @@ let today = moment().format();
 const app = express();
 const session = require("express-session");
 const passport = require('passport')
+const jwt = require("jsonwebtoken");
 // const bodyParser = require('body-parser');
 require('./database/passport.js')(passport)
 app.use(passport.initialize())
@@ -23,8 +24,8 @@ app.use(
   cors({
     credentials: true,
     origin: 'http://localhost:3000',
-    methods: 'GET,PUT,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,x-token',
+    // methods: 'GET,PUT,POST,DELETE,OPTIONS',
+    // allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,x-token',
   })
 )
 app.use(logger('dev'));
@@ -46,9 +47,34 @@ app.use(
     saveUninitialized: true,
   })
 )
+
+// jwt token
+app.use((req, res, next) => {
+  const setMemberId = (authorization) => {
+    const token = authorization
+    const code = token.replace('Bearer ', '')
+    const decoded = jwt.verify(code, process.env.JWT_SECRET)
+    req.session.mid = decoded.mid
+  }
+  // get token from axios
+  try {
+    setMemberId(req.body.headers.Authorization)
+  } catch {}
+  // get token from fetch API
+  try {
+    setMemberId(req.headers.authorization)
+  } catch {}
+  next()
+})
+
+// test decoded
+// app.use((req, res, next) => {
+//   console.log('session: ', req.session.mid)
+//   next()
+// })
+
 // home 
 const homeRouter = require('./api/Home/home');
-
 //member
 const member = require('./api/Member/member.js')
 const loginAndRegister = require('./api/LoginAndRegister/loginandregister.js')
@@ -72,8 +98,6 @@ const officialId = require("./api/Official/officialid.js");
 const course = require('./api/Course/course.js');
 const getCourseForm = require("./api/Course/getForm.js");
 const getCollect = require("./api/Course/getCollect.js")
-
-
 //排行榜
 const bestSellerRouter = require('./api/Bestseller/bestseller')
 
@@ -113,15 +137,12 @@ app.use(function (req, res, next) {
   next();
 });
 
-
-
 app.get("/", function (req, res) {
   // res.send("Hello Express BBB");
   res.cookie("lang", "zh-TW");
   res.render("index");
   // views/index.pug
 });
-
 
 app.use(function (req, res, next) {
   console.log(`有人在${today}來訪問`);

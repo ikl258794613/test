@@ -3,8 +3,8 @@ const router = express.Router();
 const connection = require("../../database/db");
 
 router.post("/", async (req, res) => {
-  console.log(req.body)
-  const memberId = 1
+  // console.log(req.body)
+  const memberId = req.session.mid
   const { number , qty , total, address } = req.body
   function getId() {  
     let date = Date.now();
