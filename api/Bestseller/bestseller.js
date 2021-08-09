@@ -130,7 +130,7 @@ async function updateCartOrFavTable(memberId, productId, tableName) {
 
 router.post('/addcart', async (req,res) => {
   const { data } = req.body
-  const memberId = 8
+  const memberId = req.session.mid
   const productId = data.id
   const tableName = 'customized_cart'
 

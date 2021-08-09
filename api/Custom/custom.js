@@ -86,7 +86,7 @@ async function updateCartOrFavTable(memberId, productId, tableName) {
 
 router.post('/addcart', async (req,res) => {
   // console.log(req.body)
-  const memberId = 16 // replace with session.member.id
+  const memberId = req.session.mid
   const { productCode } = req.body
   const tableName = 'customized_cart'
 
@@ -104,7 +104,7 @@ router.post('/addcart', async (req,res) => {
 
 router.post('/addfavorite', async (req,res) => {
   // console.log(req.body)
-  const memberId = 14 // replace with session.member.id
+  const memberId = req.session.mid
   const { productCode } = req.body
   const tableName = 'customized_collect'
 

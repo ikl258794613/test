@@ -3,9 +3,9 @@ const router = express.Router();
 const connection = require("../../database/db");
 
 router.post("/", async (req, res) => {
-  console.log(req.body)
+  // console.log(req.body)
   const { course_id , place , date, package,people,period, price} = req.body
-  const memberId = 1
+  const memberId = req.session.mid
   function getId() {  
     let date = Date.now();
     let rund = Math.ceil(Math.random()*10)
