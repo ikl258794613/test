@@ -23,7 +23,7 @@ async function checkProductInCart (memberId,productId){
     const quantityArr = userData.product_quantity.split(',').map(Number)
 
     const index = productArr.findIndex((item) => {
-        return productId === item
+        return productId == item
       })
     
     if (index > -1) {

@@ -23,7 +23,7 @@ async function checkProductInCollect (memberId,productId){
     const productArr = userData.product_id.split(',').map(Number)
     
     const index = productArr.findIndex((item) => {
-        return productId === item
+        return productId == item
       })
     
     if (index > -1) {

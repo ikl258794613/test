@@ -52,6 +52,7 @@ const homeRouter = require('./api/Home/home');
 //member
 const member = require('./api/Member/member.js')
 const loginAndRegister = require('./api/LoginAndRegister/loginandregister.js')
+const memberOrder = require('./api/Member/memberOrder.js')
 //sidebar
 const sidebar = require('./api/Sidebar/sidebar.js')
 //購物車
@@ -82,6 +83,7 @@ app.use('/home', homeRouter);
 //member
 app.use("/member", member)
 app.use("/loginAndRegister", loginAndRegister)
+app.use("/memberOrder", memberOrder)
 //sidebar
 app.use('/sidebar', sidebar)
 //購物車
