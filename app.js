@@ -101,6 +101,11 @@ const getCourseForm = require("./api/Course/getForm.js");
 const getCollect = require("./api/Course/getCollect.js")
 //排行榜
 const bestSellerRouter = require('./api/Bestseller/bestseller')
+//心理測驗
+const quiz = require('./api/Quiz/quiz.js');
+
+
+
 
 //home
 app.use('/home', homeRouter);
@@ -130,6 +135,9 @@ app.use("/getCourseForm", getCourseForm)
 app.use("/getCollect", getCollect);
 //排行榜
 app.use('/bestseller', bestSellerRouter)
+//心理測驗
+app.use("/quiz", quiz);
+
 
 app.use('/', indexRouter);
 // app.use('/users', usersRouter);

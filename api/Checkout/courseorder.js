@@ -6,7 +6,7 @@ router.post("/", async (req, res) => {
   // console.log(req.body)
   const { course_id , place , date, package,people,period, price} = req.body
   const memberId = req.session.mid
-  function getId() {  
+  function getId() {
     let date = Date.now();
     let rund = Math.ceil(Math.random()*10)
     let id = date + '' + rund;
